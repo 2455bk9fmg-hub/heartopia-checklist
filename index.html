@@ -1,1 +1,241 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ハートピア チェックリスト</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#fff8f7;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;color:#443d42}main{width:min(90%,500px);text-align:center}h1{font-size:28px;margin-bottom:8px}.sub{opacity:.65;margin-bottom:28px}a{display:block;text-decoration:none;color:#443d42;background:#fff;border-radius:22px;padding:25px;margin:14px 0;font-size:22px;font-weight:700;box-shadow:0 4px 18px #00000015}</style></head><body><main><h1>ハートピア<br>エサチェックリスト</h1><div class="sub">どちらかをタップしてね🐾</div><a href="heartopia_cat_FINAL.html">🐱 猫のエサチェックリスト</a><a href="heartopia_dog_FINAL.html">🐶 犬のエサチェックリスト</a></main></body></html>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>ハートピア ペット登録</title>
+
+<style>
+body {
+  margin: 0;
+  background: #fff8f7;
+  font-family: sans-serif;
+  color: #443d42;
+}
+
+main {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px 14px 60px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.tab {
+  flex: 1;
+  border: 0;
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 18px;
+  background: white;
+}
+
+.tab.active {
+  background: #ffdfe6;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  margin: 10px 0;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.name {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.save {
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+}
+
+.go {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #443d42;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<h1>🐾 ハートピア<br>ペット登録</h1>
+
+<p style="text-align:center">
+猫・犬をそれぞれ最大5匹登録できます
+</p>
+
+<div class="tabs">
+<button class="tab active" onclick="show('cat',this)">
+🐱 猫
+</button>
+
+<button class="tab" onclick="show('dog',this)">
+🐶 犬
+</button>
+</div>
+
+<div id="cat" class="panel active"></div>
+<div id="dog" class="panel"></div>
+
+</main>
+
+<script>
+
+function show(id, button) {
+
+  document.querySelectorAll('.panel').forEach(function(x) {
+    x.classList.remove('active');
+  });
+
+  document.querySelectorAll('.tab').forEach(function(x) {
+    x.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  button.classList.add('active');
+}
+
+
+function build(type, emoji, file) {
+
+  let area = document.getElementById(type);
+
+  for (let i = 1; i <= 5; i++) {
+
+    let key = 'heartopia_' + type + '_' + i;
+
+    let savedName = localStorage.getItem(key) || '';
+
+    let card = document.createElement('div');
+
+    card.className = 'card';
+
+    card.innerHTML = `
+      <div class="row">
+
+        <span style="font-size:30px">
+          ${emoji}
+        </span>
+
+        <input
+          class="name"
+          placeholder="名前を入力"
+          value="${savedName}"
+        >
+
+        <button class="save">
+          保存
+        </button>
+
+      </div>
+
+      <a class="go" href="#">
+        この子のチェックリストを開く →
+      </a>
+    `;
+
+    let input = card.querySelector('.name');
+    let saveButton = card.querySelector('.save');
+    let goButton = card.querySelector('.go');
+
+
+    saveButton.onclick = function() {
+
+      localStorage.setItem(
+        key,
+        input.value.trim()
+      );
+
+      saveButton.textContent = '保存した！';
+
+      setTimeout(function() {
+        saveButton.textContent = '保存';
+      }, 1000);
+
+    };
+
+
+    goButton.onclick = function(e) {
+
+      e.preventDefault();
+
+      let petName = input.value.trim();
+
+      if (petName === '') {
+        petName = type + i;
+      }
+
+      localStorage.setItem(
+        key,
+        petName
+      );
+
+      location.href =
+        file +
+        '?pet=' +
+        encodeURIComponent(petName) +
+        '&id=' +
+        type + i;
+
+    };
+
+    area.appendChild(card);
+
+  }
+
+}
+
+
+build(
+  'cat',
+  '🐱',
+  'heartopia_cat_FINAL.html'
+);
+
+build(
+  'dog',
+  '🐶',
+  'heartopia_dog_FINAL.html'
+);
+
+</script>
+
+</body>
+</html>
